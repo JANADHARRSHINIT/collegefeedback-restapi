@@ -1,6 +1,7 @@
 package com.project.feedback.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,19 @@ import com.project.feedback.repository.FeedbackRepository;
 
 @Service
 public class Feedbackservice {
-     @Autowired
+    @Autowired
     private FeedbackRepository repo;
+
     public Feedbackentity saveFeedback(Feedbackentity feedback) {
         return repo.save(feedback);
+    }
+
+    public List<Feedbackentity> getAllFeedback() {
+        return repo.findAll();
+    }
+
+    public Optional<Feedbackentity> getFeedbackById(Long id) {
+        return repo.findById(id);
     }
 
     public List<Feedbackentity> getUserFeedback(Long userId) {
@@ -28,15 +38,12 @@ public class Feedbackservice {
         return repo.findByFacultyId(facultyId);
     }
 
-    public String updateFeedback(Long id, Feedbackentity feedback) {
-        if (repo.existsById(id)) {
-			repo.save(feedback);
-			return id + "Data updated successfully";
-		} else {
-			return id + "Data not found";
-		}
-
+    public Feedbackentity updateFeedback(Long id, Feedbackentity feedback) {
+        feedback.setId(id);
+        return repo.save(feedback);
     }
-   
 
+    public void deleteFeedback(Long id) {
+        repo.deleteById(id);
+    }
 }

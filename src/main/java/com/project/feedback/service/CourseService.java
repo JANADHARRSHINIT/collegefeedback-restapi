@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -21,13 +22,16 @@ public class CourseService {
         return repo.findAll();
     }
 
-    public String updateCourse(Long id, Courseentity updatedCourse) {
-        if (repo.existsById(id)) {
-			repo.save(updatedCourse);
-			return id + "Data updated successfully";
-		} else {
-			return id + "Data not found";
-		}
+    public Optional<Courseentity> getCourseById(Long id) {
+        return repo.findById(id);
+    }
 
+    public Courseentity updateCourse(Long id, Courseentity updatedCourse) {
+        updatedCourse.setId(id);
+        return repo.save(updatedCourse);
+    }
+
+    public void deleteCourse(Long id) {
+        repo.deleteById(id);
     }
 }
