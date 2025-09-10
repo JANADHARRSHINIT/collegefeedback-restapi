@@ -5,14 +5,13 @@ import com.project.feedback.entity.Feedbackentity;
 import com.project.feedback.service.CourseService;
 import com.project.feedback.service.Feedbackservice;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/courses")
+@CrossOrigin(origins = "*")
 public class CourseController {
 
     @Autowired
@@ -26,12 +25,6 @@ public class CourseController {
         return courseService.getAllCourses();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Courseentity> getCourseById(@PathVariable Long id) {
-        Optional<Courseentity> course = courseService.getCourseById(id);
-        return course.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-    }
-
     @PostMapping
     public Courseentity createCourse(@RequestBody Courseentity course) {
         return courseService.saveCourse(course);
@@ -40,12 +33,6 @@ public class CourseController {
     @PutMapping("/{id}")
     public Courseentity updateCourse(@PathVariable Long id, @RequestBody Courseentity updatedCourse) {
         return courseService.updateCourse(id, updatedCourse);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
-        courseService.deleteCourse(id);
-        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/feedback")

@@ -29,4 +29,12 @@ public class UserService {
     public void deleteUser(Long id) {
         repo.deleteById(id);
     }
+
+    public boolean existsByUsername(String username) {
+        return repo.existsByUsername(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return repo.existsByEmail(email);
+    }
 }
