@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.project.feedback.entity.Feedbackentity;
@@ -45,5 +47,13 @@ public class Feedbackservice {
 
     public void deleteFeedback(Long id) {
         repo.deleteById(id);
+    }
+
+    public Page<Feedbackentity> getAllFeedbackPaginated(Pageable pageable) {
+        return repo.findAll(pageable);
+    }
+
+    public Page<Feedbackentity> searchFeedback(String studentName, String courseName, Integer rating, Pageable pageable) {
+        return repo.searchFeedback(studentName, courseName, rating, pageable);
     }
 }

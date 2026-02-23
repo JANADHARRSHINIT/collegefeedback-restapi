@@ -39,6 +39,10 @@ public class Courseentity {
     @ManyToOne
     @JoinColumn(name = "faculty_id")   
     private Userentity faculty;
+    
+    @ManyToOne
+    @JoinColumn(name = "department_id", insertable = false, updatable = false)
+    private Department department;
 
     @OneToMany(mappedBy = "course")  
     private List<Feedbackentity> feedbacks;

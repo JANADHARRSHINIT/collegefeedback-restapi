@@ -3,6 +3,11 @@ package com.project.feedback.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +29,32 @@ public class FeedbackController {
     Feedbackservice service;
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('STUDENT', 'FACULTY', 'ADMIN')")
     public Feedbackentity submitFeedback(@RequestBody Feedbackentity feedback) {
         return service.saveFeedback(feedback);
     }
 
     @GetMapping
-    public List<Feedbackentity> getUserFeedback(@RequestParam Long userId) {
+    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN')")
+    public List<Feedbackentity> getAllFeedback() {
+        return service.getAllFeedback();
+    }
+
+    @GetMapping("/paginated")
+    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN')")
+    public Page<Feedbackentity> getAllFeedbackPaginated(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? 
+            Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return service.getAllFeedbackPaginated(pageable);
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Feedbackentity> getUserFeedback(@PathVariable Long userId) {
         return service.getUserFeedback(userId);
     }
 
@@ -46,5 +71,21 @@ public class FeedbackController {
     @PutMapping("/{id}")
     public Feedbackentity updateFeedback(@PathVariable Long id, @RequestBody Feedbackentity feedback) {
         return service.updateFeedback(id, feedback);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('FACULTY', 'ADMIN')")
+    public Page<Feedbackentity> searchFeedback(
+            @RequestParam(required = false) String studentName,
+            @RequestParam(required = false) String courseName,
+            @RequestParam(required = false) Integer rating,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "date") String sortBy,
+            @RequestParam(defaultValue = "desc") String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("desc") ? 
+            Sort.by(sortBy).descending() : Sort.by(sortBy).ascending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return service.searchFeedback(studentName, courseName, rating, pageable);
     }
 }
